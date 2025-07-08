@@ -5,13 +5,15 @@ import jwt from "jsonwebtoken";
 
 const RegisterUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { firstname, lastname, email, password, role, status } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = {
-      name,
+      firstname,
+      lastname,
       email,
       password: hashedPassword,
       role,
+      status,
     };
     const result = await userModel.create(user);
     res.status(201).json(result);
@@ -34,9 +36,11 @@ const loginUser = async (req, res) => {
       res.status(404).json({ message: "Invalid Password" });
     }
     const userObj = {
-      name: user.name,
+      firstname: user.firstname,
+      lastname: user.lastname,
       email: user.email,
       role: user.role,
+      status: user.status,
     };
     const token = jwt.sign(userObj, JWT_Secret, { expiresIn: "1h" });
     res.status(200).json(token);
