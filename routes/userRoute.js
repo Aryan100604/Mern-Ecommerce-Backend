@@ -8,9 +8,11 @@ import {
   updateUser,
   deleteUser,
   showallUsers,
+  getUserDetails,
 } from "../controllers/userController.js";
 
 router.get("/users", authenticate, authorize, showallUsers);
+router.get("/:id/profile", authenticate, getUserDetails);
 
 router.post("/register", RegisterUser);
 

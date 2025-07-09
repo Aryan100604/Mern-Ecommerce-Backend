@@ -36,6 +36,7 @@ const loginUser = async (req, res) => {
       res.status(404).json({ message: "Invalid Password" });
     }
     const userObj = {
+      _id: user._id,
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
@@ -81,5 +82,29 @@ const deleteUser = async (req, res) => {
       .json({ message: "Something went worng user cannot be deleted" });
   }
 };
+const getUserDetails = async (req, res) => {
+  const user = req.user;
+  const FoundUser = await userModel.findById(user._id);
+  if (!FoundUser) {
+    res.status(404).json({ message: "User not found" });
+  }
 
-export { RegisterUser, loginUser, updateUser, showallUsers, deleteUser };
+  const userObj = {
+    firstname: FoundUser.firstname,
+    lastname: FoundUser.lastname,
+    email: FoundUser.email,
+    role: FoundUser.role,
+    status: FoundUser.status,
+  };
+
+  res.status(200).json({ message: "User Profile", userObj });
+};
+
+export {
+  RegisterUser,
+  loginUser,
+  updateUser,
+  showallUsers,
+  deleteUser,
+  getUserDetails,
+};

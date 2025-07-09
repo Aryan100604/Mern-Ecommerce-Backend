@@ -7,6 +7,7 @@ const authenticate = (req, res, next) => {
   if (!decodedToken) {
     return res.status(400).json({ message: "User is not authorized" });
   }
+  req.user = decodedToken;
   req.role = decodedToken.role;
   next();
 };
