@@ -1,23 +1,26 @@
 import jwt from "jsonwebtoken";
-const JWT_Secret = "dnsoivnsdo";
+const SECRET = "something";
 
 const authenticate = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const decodedToken = jwt.verify(token, JWT_Secret);
-  if (!decodedToken) {
-    return res.status(400).json({ message: "User is not authorized" });
+  try {
+    let token = req.headers.authorization;
+    token = token.split(" ")[1];
+    const user = jwt.verify(token, SECRET);
+    req.role = user.role;
+    next();
+  } catch (err) {
+    return res.json({ message: "Access Denied" });
   }
-  req.user = decodedToken;
-  req.role = decodedToken.role;
-  next();
 };
-const authorize = (req, res, next) => {
-  if (req.role === "admin") {
-    return next();
-  }
-  return res
-    .status(400)
-    .json({ message: "User is not authorized need to admin" });
+
+const authorize = (role) => {
+  return (req, res, next) => {
+    if (req.role === role) {
+      next();
+    } else {
+      return res.json({ message: "Unauthorized Access" });
+    }
+  };
 };
 
 export { authenticate, authorize };
